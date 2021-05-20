@@ -337,3 +337,131 @@ def search_history_list(request):
     result['items'] = list(query_history_lists)
     return JsonResponse(result)
 
+
+def get_supplier_name_charts(request):
+    result = {
+        'result': False,
+        'code': 501,
+        'message': 'error',
+        'data': {
+            'series': [{
+                'type': 'bar',
+                'name': '按日期分组',
+                'data': [],
+                'data1': [],
+                # 'barCategoryGap': "0%"
+            }],
+            'xAxis': [{
+                'data': [],
+                'type': "category"
+            }]
+        }
+    }
+    time = request.GET.get('dataTime')  # 202105
+    if time:
+        start_time = time + '01'
+        end_time = time + '31'
+        year = int(time[0:4])
+        month = int(time[4:])
+        days = calendar.monthrange(year, month)[1]
+        for day in range(days):
+            result['data']['xAxis'][0]['data'].append(day + 1)
+            result['data']['series'][0]['data'].append(0)
+            result['data']['series'][0]['data1'].append({
+                'date': str(year) + u'年' + str(month) + u'月' + str(day + 1) + u'日',
+                'error_count': 0
+            })
+        select_result = models.StmSendHistory.objects \
+            .filter(created_date__gte=int(start_time), created_date__lte=int(end_time)) \
+            .exclude(error_code="0").values('created_date').annotate(error_count=Count('error_code'))
+    else:
+        select_result = models.StmSendHistory.objects.exclude(error_code="0").values('created_date') \
+            .annotate(error_count=Count('error_code'))
+    if select_result:
+        for result_info in select_result:
+            if result_info.get('created_date') and str(result_info.get('created_date'))[-2:]:  # 获取天数
+                day_index = str(result_info.get('created_date'))[-2:]
+                result['data']['series'][0]['data'][int(day_index)] = result_info.get('error_count')
+                result['data']['series'][0]['data1'][int(day_index)]['error_count'] = result_info.get('error_count')
+    result['result'] = True
+    result['message'] = 'success'
+    result['code'] = 0
+    return JsonResponse(result)
+
+
+def get_supplier_channel_charts(request):
+    result = get_result()
+    select_result = models.StmSendHistory.objects.raw("""
+
+        SELECT a.id as id, a.supplier_channel,a.okcnt,b.errcnt 
+        from (select id, supplier_channel,count(error_code) okcnt from `ht_stm_send_history` group by supplier_channel) a 
+        left JOIN (select supplier_channel,count(error_code) errcnt from `ht_stm_send_history` where error_code!='0' group by supplier_channel) b
+        on a.supplier_channel=b.supplier_channel ORDER BY b.errcnt desc
+    """)
+
+    # select_result = models.StmSendHistory.objects.values('supplier_channel').annotate(
+    #     supplier_channel_count=Count('supplier_channel')).filter(error_code='0').annotate(
+    #     error_count=Count('error_code')).order_by('-error_count')
+    if select_result:
+        for result_info in list(select_result):
+            result['data']['series'][0]['data1'].append({
+                'error_count': result_info.errcnt,
+                'total_count': result_info.okcnt,
+                'name': result_info.supplier_channel,
+            })
+            result['data']['series'][0]['data'].append(result_info.errcnt)
+            result['data']['yAxis'].append(result_info.errcnt)
+    result['result'] = True
+    result['message'] = 'success'
+    result['code'] = 0
+    return JsonResponse(result)
+
+
+def get_customer_name_charts(request):
+    result = get_result()
+    select_result = models.StmSendHistory.objects.raw("""
+        SELECT a.id as id, a.custmer_name,a.okcnt,b.errcnt 
+        from (select id, custmer_name,count(error_code) okcnt from `ht_stm_send_history` group by custmer_name) a 
+        left JOIN (select custmer_name,count(error_code) errcnt from `ht_stm_send_history` where error_code!='0' group by custmer_name) b
+        on a.custmer_name=b.custmer_name ORDER BY b.errcnt desc
+       """)
+    # select_result = models.StmSendHistory.objects.values('custmer_name').annotate(
+    #     supplier_channel_count=Count('custmer_name')).filter(error_code='0').annotate(
+    #     error_count=Count('error_code')).order_by('-error_count')
+    result['data']['series'][0]['name'] = '按用户分组'
+    if select_result:
+        for result_info in list(select_result):
+            result['data']['series'][0]['data1'].append({
+                'error_count': result_info.errcnt,
+                'total_count': result_info.okcnt,
+                'name': result_info.custmer_name,
+            })
+            result['data']['series'][0]['data'].append(result_info.errcnt)
+            result['data']['yAxis'].append(result_info.errcnt)
+    result['result'] = True
+    result['message'] = 'success'
+    result['code'] = 0
+    return JsonResponse(result)
+
+
+def get_result():
+    result = {
+        'result': False,
+        'code': 501,
+        'message': 'error',
+        'data': {
+            'series': [{
+                'type': 'bar',
+                'name': '按短信发送渠道分组',
+                'data': [],
+                'data1': [],
+                # 'barCategoryGap': "0%"
+            }],
+            'title': {
+                'subtext': "数据来自网络",
+                'text': "失败总量"
+            },
+            'yAxis': []
+        }
+    }
+    return result

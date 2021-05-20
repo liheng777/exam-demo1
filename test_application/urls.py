@@ -26,4 +26,8 @@ urlpatterns = (
     url(r"^get_set/$", views.get_set),
     url(r"^do_execute_job/$", views.do_execute_job),
     url(r"^search_history_list/$", views.search_history_list),
+
+    url(r"^get_supplier_name_charts/$", views.get_supplier_name_charts),
+    url(r"^get_supplier_channel_charts/$", views.get_supplier_channel_charts),
+    url(r"^get_customer_name_charts/$", views.get_customer_name_charts),
 )

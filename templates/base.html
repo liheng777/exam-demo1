@@ -19,6 +19,7 @@
         <!-- 平台cs	 -->
         <link href="{{ REMOTE_STATIC_URL }}v3/bk/css/bk.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}open/css/index.css?v={{ STATIC_VERSION }}">
+        <link href="https://magicbox.bk.tencent.com/static_api/v3/assets/select2-3.5.2/select2.css" rel="stylesheet">
         <style>
             /*如果你需要给你的应用固定高度和宽度，请在这里修改*/
             body {
@@ -51,6 +52,8 @@
     <script src="{{ REMOTE_STATIC_URL }}v3/assets/jquery-ui-1.11.0.custom/jquery-ui.min.js"></script>
     <!-- 平台 js  -->
     <script src="{{ REMOTE_STATIC_URL }}v3/bk/js/bk.js"></script>
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/echarts-2.0/echarts-all.js"></script>
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/select2-3.5.2/select2.js"></script>
 
     <!-- 这个是全局配置，如果需要在js中使用app_code和site_url,则这个javascript片段一定要保留 -->
     <script type="text/javascript">
@@ -79,5 +82,155 @@
     <!--
         这里放置子页面中附加内容，一般为js，注意子模版中的js如果使用到以上js库，必须放置在这里
      -->
+    <script type="text/javascript">
+    $(function () {
+        var time = $('#select_time').val()
+        initEBarChart({
+            url: '{{ site_url }}get_supplier_name_charts',
+            data: {dataTime: time},
+            containerId: 'chart2_demoA'
+        });
+        initEHorBarChart({
+            url: '{{ site_url }}get_supplier_channel_charts',
+            dataType: 'json',
+            containerId: 'chart2_demoB'
+        });
+        initEHorBarChart({
+            url: '{{ site_url }}get_customer_name_charts',
+            dataType: 'json',
+            containerId: 'chart2_demoC'
+        });
+         $('#searchButton').click(function () {
+            time = $('#select_time').val()
+            initEBarChart({
+                url: '{{ site_url }}get_supplier_name_charts',
+                data: {dataTime: time},
+                containerId: 'chart2_demoA'
+            });
+        })
+    });
+
+    function createEBarChart(conf) {
+        var myChart = echarts.init(document.getElementById(conf.selector));
+        var legendData = [];//存放变量的name
+        for (var i = 0; i < conf.data.series.length; i++) {
+            legendData.push(conf.data.series[i].name);
+        }
+        myChart.setOption({
+            legend: {
+                y: 'bottom',
+                data: legendData
+            },
+            tooltip: {
+                trigger: 'axis',
+                formatter(params) {
+                    let data = params[0].series.data1[params[0].dataIndex]
+                    return data.date + '<br />总数量: ' + data.error_count
+
+                }
+            },
+            toolbox: {
+                show: false, // 显示工具箱
+                feature: {
+                    mark: {show: true},
+                    dataView: {show: true, readOnly: false},
+                    magicType: {show: true, type: ['line', 'bar']},
+                    restore: {show: true},
+                    saveAsImage: {show: true}
+                }
+            },
+            calculable: true,
+            yAxis: [
+                {
+                    type: 'value',
+                    splitArea: {show: true}
+                }
+            ],
+            xAxis: conf.data.xAxis,
+            series: conf.data.series
+        })
+    }
+
+    function initEBarChart(conf) {
+        $.ajax({
+            url: conf.url,
+            type: 'GET',
+            data: conf.data,
+            success: function (res) {
+                //获取数据成功
+                if (res.result) {
+                    createEBarChart({
+                        selector: conf.containerId, // 图表容器
+                        data: res.data, // 图表数据
+                    });
+                }
+            }
+        })
+    }
+
+    // Step:4 动态加载echarts然后在回调函数中开始使用，注意保持按需加载结构定义图表路径
+    function createEHorBarChart(conf) {
+        var myChart = echarts.init(document.getElementById(conf.selector));
+        var legendData = [];
+        for (var i = 0; i < conf.data.series.length; i++) {
+            legendData.push(conf.data.series[i].name);
+        }
+        myChart.setOption({
+            title: conf.data.title,
+            tooltip: {
+                trigger: 'axis',
+                formatter(params) {
+                    let data = params[0].series.data1[params[0].dataIndex]
+                    return data.name + '<br />总数量: ' + data.total_count
+
+                }
+            },
+            legend: {
+                data: legendData
+            },
+            toolbox: {
+                show: false, // 显示工具箱
+                feature: {
+                    mark: {show: true},
+                    dataView: {show: true, readOnly: false},
+                    magicType: {show: true, type: ['line', 'bar']},
+                    restore: {show: true},
+                    saveAsImage: {show: true}
+                }
+            },
+            calculable: true,
+            xAxis: [
+                {
+                    type: 'value',
+                    boundaryGap: [0, 0.01]
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'category',
+                    data: conf.data.yAxis
+                }
+            ],
+            series: conf.data.series
+        })
+    }
+
+    function initEHorBarChart(conf) {
+        $.ajax({
+            url: conf.url,
+            type: 'GET',
+            dataType: conf.dataType,
+            success: function (res) {
+                //获取数据成功
+                if (res.result) {
+                    createEHorBarChart({
+                        selector: conf.containerId, // 图表容器
+                        data: res.data, // 图表数据
+                    });
+                }
+            }
+        })
+    }
+</script>
 {% endblock %}
 </html>

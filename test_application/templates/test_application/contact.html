@@ -12,41 +12,140 @@
             bottom: -40px;
         }
     </style>
-    <div class="page-contactus">
-        <!-- 内容 start-->
-        <!--comtactus-detail -->
-        <div class="container" >
-            <div class="tc" id="contactus">
-                <div class="weixin-img-arrow">
-                    <div>
-                        <img class="weixin-img " src="{{ STATIC_URL }}open/img/weixin_icom.png">
-                    </div>
-                    <p>{% trans "关注我们" %}</p>
+    <div class="king-layout1-main" style="width:100%; height: auto;">
+    <!-- header start -->
+    <div class="king-layout1-header" style=" background:#eee;">
+        <div class="king-header2 navbar navbar-blue">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="javascript:;" title="预警系统"><span class="shape shape1"></span><span
+                            class="shape shape2"></span><span class="shape shape3"></span><span
+                            class="shape shape4"></span><span class="txt">预警系统</span></a></div>
+                <div class="">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li class="active"><a href="index_home.html"><span>报表</span></a></li>
+                        <li><a href="alarm.html"><span>故障预警</span></a></li>
+                        <li><a href="key.html"><span>关键词</span></a></li>
+                        <li><a href="table3.html"><span>搜索</span></a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"><i
+                                class="fa fa-cog"></i><span class="ml10">帮助文档</span><span class="caret-down"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="javascript:;">帮助文档1</a></li>
+                                <li><a href="javascript:;">帮助文档2</a></li>
+                                <li><a href="javascript:;">帮助文档3</a></li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
-                <div class="comtactus-way-arrow tc mt50">
-                    <div class="dbi border-right tc" style="width: 280px; padding-left: 60px">
-                        <div class="img-arrow">
-                            <img  class="" src="{{ STATIC_URL }}open/img/icom_01.png">
-                        </div>
-                        <p class="mt20">{% trans "深圳市南山区腾讯大厦" %}</p>
+            </div>
+        </div>
+    </div>
+    <!-- header end -->
+
+    <!-- content start -->
+    <div class="king-layout1-content container">
+        <section class="king-content-header king-info-header mb20 pb10 mt20">
+            <h1 class="pull-left">
+                数据查询
+            </h1>
+            <form class="form-inline king-search-form king-no-bg pull-right">
+
+                <div class="form-group">
+                    <label>时间选择：</label>
+                    <select class="product-select form-control" id="select_time" style="width:150px;" value="202101">
+                        <option value="202101">2021年1月</option>
+                        <option value="202102">2021年2月</option>
+                        <option value="202103">2021年3月</option>
+                        <option value="202104">2021年4月</option>
+                        <option value="202105">2021年5月</option>
+                        <option value="202106">2021年6月</option>
+                        <option value="202107">2021年7月</option>
+                        <option value="202108">2021年8月</option>
+                        <option value="202109">2021年9月</option>
+                        <option value="202110">2021年10月</option>
+                        <option value="202111">2021年11月</option>
+                        <option value="202112">2021年12月</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="king-btn king-info" id="searchButton">搜索</button>
+            </form>
+        </section>
+
+        <div class="row">
+
+            <div class="col-sm-12 chart-one" id="chartA">
+                <div class="king-block king-block-bordered">
+                    <div class="king-block-header  king-gray-light">
+                        <ul class="king-block-options">
+                            <li>
+                                <button type="button"><i class="fa fa-cog"></i></button>
+                            </li>
+                        </ul>
+                        <h3 class="king-block-title">按日期分组</h3>
                     </div>
-                    <div class="dbi border-right tc" style="width: 180px">
-                        <div class="img-arrow">
-                            <img src="{{ STATIC_URL }}open/img/icom_02.png">
-                        </div>
-                        <p class="mt20">{% trans "企业QQ：800802001" %}</p>
+                    <div id="chart2_demoA" style="height:500px;padding:10px;">
+                        <img src="https://magicbox.bk.tencent.com/static_api/v3/components/loading1/images/loading_2_24x24.gif">
+                        数据加载中,请稍后...
                     </div>
-                    <div class="dbi tc" style="width: 280px">
-                        <div class="img-arrow">
-                            <img src="{{ STATIC_URL }}open/img/icom_03.png">
-                        </div>
-                        <p class="mt20">{% trans "邮箱：contactus_bk@tencent.com" %}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-sm-6 chart-one">
+                <div class="king-block king-block-bordered">
+                    <div class="king-block-header  king-gray-light">
+                        <ul class="king-block-options">
+                            <li>
+                                <button type="button"><i class="fa fa-cog"></i></button>
+                            </li>
+                        </ul>
+                        <h3 class="king-block-title f12">按短信发送渠道分组</h3>
+                    </div>
+                    <div id="chart2_demoB" style="height:500px;padding:10px;">
+                        <img src="https://magicbox.bk.tencent.com/static_api/v3/components/loading1/images/loading_2_24x24.gif">
+                        数据加载中,请稍后...
                     </div>
                 </div>
             </div>
 
+            <div class="col-sm-6 chart-one">
+                <div class="king-block king-block-bordered">
+                    <div class="king-block-header  king-gray-light">
+                        <ul class="king-block-options">
+                            <li>
+                                <button type="button"><i class="fa fa-cog"></i></button>
+                            </li>
+                        </ul>
+                        <h3 class="king-block-title f12">按用户分组</h3>
+                    </div>
+                    <div id="chart2_demoC" style="height:500px;padding:10px;">
+                        <img src="https://magicbox.bk.tencent.com/static_api/v3/components/loading1/images/loading_2_24x24.gif">
+                        数据加载中,请稍后...
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- 内容 start-->
+
     </div>
+    <!-- content end -->
+
+    <!-- footer start -->
+    <div class="king-layout1-footer">
+        <footer class="king-footer">
+            <p class="king-copyright">Copyright © 2012-2015 Tencent. All Rights Reserved.</p>
+        </footer>
+    </div>
+    <!-- footer end -->
+</div>
 {% endblock %}
 
+{% block extra_block %}
+    <!--
+        这里放置子页面中附加内容，一般为js，注意子模版中的js如果使用到以上js库，必须放置在这里
+     -->
+{% endblock %}

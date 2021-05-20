@@ -34,3 +34,22 @@ class History(models.Model):
         db_table = 'history'
         verbose_name = u'执行历史'
         verbose_name_plural = verbose_name
+
+
+class StmSendHistory(models.Model):
+    supplier_name = models.CharField(verbose_name=u'电信运营商名', max_length=10, default=None)
+    supplier_place = models.CharField(verbose_name=u'运营商所在地', max_length=50, default=None)
+    supplier_channel = models.CharField(verbose_name=u'短信发送渠道', max_length=50, default=None)
+    custmer_name = models.CharField(verbose_name=u'客户名', max_length=225, default=None)
+    custmer_place = models.CharField(verbose_name=u'客户所在地', max_length=50, default=None)
+    mobile = models.BigIntegerField(verbose_name=u'发送目标手机',  default=None)
+    mobile_from = models.CharField(verbose_name=u'发送目标手机归属地', max_length=10, default=None)
+    error_code = models.CharField(verbose_name=u'发送结果，''0''表示发送成功，其他表示失败', max_length=4, default=None)
+    error_message = models.CharField(verbose_name=u'错误信息', max_length=100, default=None)
+    created_date = models.IntegerField(verbose_name=u'发送日期', default=None)
+    created_time = models.DateTimeField(verbose_name=u'发送日期', default=None)
+
+    class Meta:
+        db_table = 'ht_stm_send_history'
+        verbose_name = u'发送历史表'
+        verbose_name_plural = verbose_name
