@@ -21,3 +21,7 @@ requests==2.22.0
 python-json-logger==0.1.7
 whitenoise==3.3.0
 six==1.11.0
+
+# excel导入导出所需模块
+xlrd==1.2.0
+xlwt==1.3.0

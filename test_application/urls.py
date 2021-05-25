@@ -30,4 +30,7 @@ urlpatterns = (
     url(r"^get_supplier_name_charts/$", views.get_supplier_name_charts),
     url(r"^get_supplier_channel_charts/$", views.get_supplier_channel_charts),
     url(r"^get_customer_name_charts/$", views.get_customer_name_charts),
+
+    url(r'^download_data', views.download_data),  # 导出Excel
+    url(r'^export_all_excel/$', views.export_all_excel),
 )

@@ -26,9 +26,6 @@ from config import APP_CODE, SECRET_KEY
 from test_application import models
 from test_application import bk_api
 
-import urllib.request
-import ssl
-
 
 def home(request):
     """
@@ -460,3 +457,51 @@ def get_result():
         }
     }
     return result
+
+
+def export_excel(request):
+    pass
+
+
+def download_data(request):
+    """
+      导出数据
+      """
+    data = {'result': False}
+    error_result = {"result": False, "code": 0, "message": u"查询失败，请与管理员联系", "data": {}}
+    client = get_client_by_request(request)
+    item = json.loads(request.GET.get('data'))
+    bk_supplier_account = item.get('bkSupplierAccount', '0')
+    bk_obj_id = item.get('bkObjId')
+    bk_inst_id_list = item.get('instIds', [])
+    items = []
+    if bk_inst_id_list:
+        for bk_inst_id in bk_inst_id_list:
+            _params = {
+                'bk_obj_id': bk_obj_id,
+                "condition": {
+                    "bk_inst_id": int(bk_inst_id),
+                    "status": ""
+                }
+            }
+            result = client.cc.search_inst_by_object(_params)
+            items.append(result.get('data').get('info')[0])
+    else:
+        _params = {
+            'bk_obj_id': bk_obj_id,
+            'bk_supplier_account': bk_supplier_account,
+        }
+        result = client.cc.search_inst(_params)
+        items = result.get('data').get('info')
+    data['items'] = items
+    data['result'] = True
+    if data.get('result'):
+        return data
+    else:
+        return error_result
+
+
+def export_all_excel(request):
+    tangshi = models.History()
+    alert_text = tangshi.export_excel(None)
+    return HttpResponse(alert_text)
