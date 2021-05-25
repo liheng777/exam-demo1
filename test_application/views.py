@@ -229,21 +229,16 @@ def search_host(request):
     }
     if bk_set_id:
         param['bk_set_ids'] = [int(bk_set_id)]
-    result = bk_api.search_biz_hosts(client, param)
+    result = client.cc.list_biz_hosts(param)
     return JsonResponse(result)
 
 
 def get_set(request):
     client = get_client_by_request(request)
     bk_biz_id = request.GET.get('bk_biz_id', 2)
-    param = {
-        "fields": [
-            "bk_set_id",
-            "bk_set_name"
-        ],
-        "bk_biz_id": int(bk_biz_id)
-    }
-    result = bk_api.search_set(client, param)
+    bk_set_name = request.GET.get('bk_set_name')
+
+    result = bk_api.do_search_set(client, bk_biz_id, bk_set_name)
     return JsonResponse(result)
 
 

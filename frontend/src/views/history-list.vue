@@ -77,6 +77,7 @@
 <script>
 
 import Vue from 'vue'
+import moment from 'moment'
 import { bkButton, bkTable, bkTableColumn, bkTooltips, bkPagination, bkDatePicker, bkDialog  } from 'bk-magic-vue'
 Vue.use(bkTooltips)
 export default {
@@ -178,6 +179,25 @@ export default {
         .finally(() => {
           this.isLoading = false
         })
+    },
+    exportExcel() {
+      const data = {
+
+      }
+      this.$http.post('url', data, { responseType: 'blob' }).then((res) => {
+        const blob = new Blob([res], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
+        })
+        const url = window.URL.createObjectURL(blob)
+        const _aTag = document.createElement('a')
+        document.body.appendChild(_aTag)
+        _aTag.href = url
+        _aTag.target = '_blank'
+        _aTag.download = `IP导出-${moment.format('YYYMMDDHHmmss')}.xlsx`
+        _aTag.click()
+        document.body.removeChild(_aTag)
+        window.URL.revokeObjectURL(url)
+      })
     }
   }
 }
